@@ -429,6 +429,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Download build artifacts
       uses: actions/download-artifact@v4
@@ -486,18 +487,28 @@ jobs:
         See [CHANGELOG.md](CHANGELOG.md) for detailed changes.
         EOF
         
-        # Check if release already exists
-        if gh release view "$TAG_NAME" >/dev/null 2>&1; then
-          echo "Release $TAG_NAME already exists, updating..."
-          gh release edit "$TAG_NAME" \
-            --title "$RELEASE_NAME" \
-            --notes-file release_notes.md
+        # Check if tag already exists
+        if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+          echo "Tag $TAG_NAME already exists"
+          # Check if release exists
+          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+            echo "Release $TAG_NAME already exists, updating..."
+            gh release edit "$TAG_NAME" \
+              --title "$RELEASE_NAME" \
+              --notes-file release_notes.md
+          else
+            echo "Creating release for existing tag $TAG_NAME..."
+            gh release create "$TAG_NAME" \
+              --title "$RELEASE_NAME" \
+              --notes-file release_notes.md
+          fi
         else
-          echo "Creating new release $TAG_NAME..."
+          echo "Creating new tag and release $TAG_NAME..."
           gh release create "$TAG_NAME" \
             --title "$RELEASE_NAME" \
             --notes-file release_notes.md \
-            --target master
+            --target "${{ github.sha }}" \
+            --generate-notes
         fi
         
         # Upload JAR artifact
