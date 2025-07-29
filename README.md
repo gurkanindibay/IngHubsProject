@@ -274,7 +274,29 @@ docker compose logs -f wallet-service
 ```
 
 
-## 📚 Extra Documentation
+## � CI/CD Pipeline
+
+The project includes a comprehensive GitHub Actions pipeline that ensures code quality and deployment readiness:
+
+### Automated Quality Assurance
+- **Unit Testing**: Automatic test execution with coverage reporting via JaCoCo
+- **Security Scanning**: Dependency vulnerability checks and code security analysis
+- **Code Quality**: SpotBugs, Checkstyle, and PMD analysis for maintainable code
+- **Performance Testing**: Load testing on critical endpoints
+
+### Build & Deployment
+- **Multi-Stage Build**: Clean compilation, packaging, and Docker image creation
+- **Artifact Management**: JAR files and reports stored for deployment
+- **Release Automation**: Tagged releases with comprehensive changelogs
+
+### Pipeline Triggers
+- **Pull Requests**: Full validation suite runs on every PR
+- **Main Branch**: Complete pipeline including security scans and release creation
+- **Multiple Environments**: Supports main, master, and develop branches
+
+The pipeline ensures that every code change meets enterprise standards for security, quality, and performance before deployment.
+
+## �📚 Extra Documentation
 
 This project includes comprehensive documentation for different audiences:
 
