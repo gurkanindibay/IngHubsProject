@@ -1,0 +1,32 @@
+services:
+  # Digital Wallet Service
+  wallet-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wallet-service
+    env_file:
+      - .env.docker
+    # environment variables are now exclusively in .env.docker
+    ports:
+      - "8080:8080"   # HTTPS (SSL/TLS enabled)
+      - "8443:8080"   # Alternative port mapping to 8080
+    volumes:
+      - wallet_data:/app/data
+    networks:
+      - wallet-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-check-certificate", "--quiet", "--spider", "https://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  wallet_data:
+    driver: local
+
+networks:
+  wallet-network:
+    driver: bridge

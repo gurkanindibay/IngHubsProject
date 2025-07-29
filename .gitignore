@@ -1,0 +1,9 @@
+target/*
+logs/*
+*.log
+
+# H2 Database files
+data/
+*.db
+*.mv.db
+*.trace.db

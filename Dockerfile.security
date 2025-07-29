@@ -1,0 +1,39 @@
+# Multi-stage Dockerfile for Security Scanning
+FROM eclipse-temurin:17-jdk-jammy AS security-scanner
+
+# Install Maven and security scanning tools
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    unzip \
+    gnupg \
+    apt-transport-https \
+    ca-certificates \
+    maven \
+    && rm -rf /var/lib/apt/lists/*
+
+# Pre-download OWASP Dependency Check
+RUN mvn org.owasp:dependency-check-maven:10.0.4:help -Ddetail=true
+
+# Pre-download vulnerability database (create cache directory)
+WORKDIR /security
+RUN mkdir -p /root/.cache/dependency-check-data
+
+# Install Trivy for container scanning (simplified installation)
+RUN curl -fsSL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+
+# Verify installations
+RUN java -version && mvn -version && trivy --version
+
+# Set working directory
+WORKDIR /app
+
+# Copy pom.xml and download dependencies
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# Entry point for security scanning
+COPY security-scan.sh /security-scan.sh
+RUN chmod +x /security-scan.sh
+
+ENTRYPOINT ["/security-scan.sh"]

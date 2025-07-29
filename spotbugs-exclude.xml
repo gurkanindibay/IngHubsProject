@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- Exclude test classes -->
+    <Match>
+        <Class name="~.*Test$"/>
+    </Match>
+    <Match>
+        <Class name="~.*Tests$"/>
+    </Match>
+    
+    <!-- Exclude generated Spring Boot configuration -->
+    <Match>
+        <Class name="~.*Application$"/>
+    </Match>
+    
+    <!-- Exclude common Spring Boot false positives -->
+    <Match>
+        <Bug pattern="SE_BAD_FIELD"/>
+        <Class name="~.*Entity$"/>
+    </Match>
+    
+    <!-- Exclude serialization warnings for DTOs -->
+    <Match>
+        <Bug pattern="SE_NO_SERIALVERSIONID"/>
+    </Match>
+    
+    <!-- Exclude null pointer warnings in constructors with validation -->
+    <Match>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+        <Method name="&lt;init&gt;"/>
+    </Match>
+</FindBugsFilter>

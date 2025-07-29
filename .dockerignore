@@ -1,0 +1,55 @@
+# Docker ignore file for Digital Wallet Service
+# Ignore IDE files
+.vscode/
+.idea/
+*.iml
+
+# Ignore build artifacts
+target/
+*.jar
+*.war
+*.ear
+
+# Ignore logs
+logs/
+*.log
+
+# Ignore temporary files
+temp_tests/
+*.tmp
+*.temp
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore sensitive files
+*.p12
+*.jks
+*.keystore
+
+# Ignore Git files
+.git/
+.gitignore
+
+# Ignore documentation (except README)
+src/docs/
+*.md
+!README.md
+
+# Ignore test files
+src/test/
+
+# Ignore Maven wrapper
+.mvn/
+mvnw
+mvnw.cmd
+
+# Ignore Docker files themselves
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Ignore local environment files
+.env
+.env.local

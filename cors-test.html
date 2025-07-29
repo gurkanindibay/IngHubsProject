@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORS Test - Should Be Blocked</title>
+</head>
+<body>
+    <h1>CORS Test from test.anotherinterview.com</h1>
+    <p>This page should be served from test.anotherinterview.com to test CORS</p>
+    
+    <button onclick="testCORS()">Test API Call (Should Fail)</button>
+    <div id="result"></div>
+
+    <script>
+        async function testCORS() {
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                resultDiv.innerHTML = 'Testing...';
+                
+                // This should be blocked by CORS since we're calling from 
+                // test.anotherinterview.com to localhost:8080
+                // but CORS only allows http://test.inginterview.com
+                const response = await fetch('http://localhost:8080/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: 'customer1',
+                        password: 'password123'
+                    })
+                });
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `<span style="color: red;">❌ ERROR: CORS should have blocked this request!</span><br>Response: ${JSON.stringify(data)}`;
+                
+            } catch (error) {
+                if (error.message.includes('CORS') || error.message.includes('blocked')) {
+                    resultDiv.innerHTML = `<span style="color: green;">✅ CORS is working correctly - request blocked!</span><br>Error: ${error.message}`;
+                } else {
+                    resultDiv.innerHTML = `<span style="color: orange;">⚠️ Network error (not CORS):</span><br>${error.message}`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
