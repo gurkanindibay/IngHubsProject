@@ -2,7 +2,6 @@ package com.ing.walletservice.security;
 
 import com.ing.walletservice.entity.Customer;
 import com.ing.walletservice.repository.CustomerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,8 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
     
-    @Autowired
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
+    
+    public CustomUserDetailsService(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
     
     @Override
     @Transactional

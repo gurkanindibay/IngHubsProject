@@ -9,7 +9,6 @@ import com.ing.walletservice.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,8 +23,11 @@ import java.util.List;
 @SecurityRequirement(name = "Bearer Authentication")
 public class TransactionController {
     
-    @Autowired
-    private TransactionService transactionService;
+    private final TransactionService transactionService;
+    
+    public TransactionController(TransactionService transactionService) {
+        this.transactionService = transactionService;
+    }
     
     @PostMapping("/deposit")
     @Operation(summary = "Make a deposit to a wallet")

@@ -12,7 +12,6 @@ import com.ing.walletservice.repository.WalletRepository;
 import com.ing.walletservice.security.UserPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -27,14 +26,15 @@ public class WalletService {
 
     private static final Logger logger = LoggerFactory.getLogger(WalletService.class);
 
-    @Autowired
-    private WalletRepository walletRepository;
+    private final WalletRepository walletRepository;
+    private final CustomerRepository customerRepository;
+    private final AuditLogger auditLogger;
 
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private AuditLogger auditLogger;
+    public WalletService(WalletRepository walletRepository, CustomerRepository customerRepository, AuditLogger auditLogger) {
+        this.walletRepository = walletRepository;
+        this.customerRepository = customerRepository;
+        this.auditLogger = auditLogger;
+    }
 
     @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public WalletResponse createWallet(CreateWalletRequest request, Authentication authentication) {

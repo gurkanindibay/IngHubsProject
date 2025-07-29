@@ -8,7 +8,6 @@ import com.ing.walletservice.security.JwtUtils;
 import com.ing.walletservice.security.UserPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -26,14 +25,15 @@ public class AuthController {
     
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtils jwtUtils;
+    private final AuditLogger auditLogger;
     
-    @Autowired
-    private JwtUtils jwtUtils;
-    
-    @Autowired
-    private AuditLogger auditLogger;
+    public AuthController(AuthenticationManager authenticationManager, JwtUtils jwtUtils, AuditLogger auditLogger) {
+        this.authenticationManager = authenticationManager;
+        this.jwtUtils = jwtUtils;
+        this.auditLogger = auditLogger;
+    }
     
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {

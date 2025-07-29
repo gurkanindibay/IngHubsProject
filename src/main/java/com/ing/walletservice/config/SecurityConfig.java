@@ -2,7 +2,7 @@ package com.ing.walletservice.config;
 
 import com.ing.walletservice.security.AuthTokenFilter;
 import com.ing.walletservice.security.CustomUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ing.walletservice.security.JwtUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,8 +28,7 @@ import java.util.Arrays;
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
     
     @Value("${app.cors.allowed-origins}")
     private String allowedOrigins;
@@ -37,9 +36,13 @@ public class SecurityConfig {
     @Value("${app.cors.enabled:true}")
     private boolean corsEnabled;
     
+    public SecurityConfig(CustomUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+    
     @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
+    public AuthTokenFilter authenticationJwtTokenFilter(JwtUtils jwtUtils, CustomUserDetailsService userDetailsService) {
+        return new AuthTokenFilter(jwtUtils, userDetailsService);
     }
     
     @Bean
@@ -63,7 +66,7 @@ public class SecurityConfig {
     }
     
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthTokenFilter authTokenFilter) throws Exception {
         // Configure CORS based on profile
         if (corsEnabled) {
             http.cors(cors -> cors
@@ -89,7 +92,7 @@ public class SecurityConfig {
             .frameOptions(frameOptions -> frameOptions.sameOrigin()));
         
         http.authenticationProvider(authenticationProvider());
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
         
         return http.build();
     }

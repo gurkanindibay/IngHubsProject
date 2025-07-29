@@ -17,7 +17,6 @@ import com.ing.walletservice.security.UserPrincipal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -33,16 +32,17 @@ public class TransactionService {
     
     private static final Logger logger = LoggerFactory.getLogger(TransactionService.class);
     
-    @Autowired
-    private TransactionRepository transactionRepository;
-    
-    @Autowired
-    private WalletRepository walletRepository;
-    
-    @Autowired
-    private AuditLogger auditLogger;
+    private final TransactionRepository transactionRepository;
+    private final WalletRepository walletRepository;
+    private final AuditLogger auditLogger;
     
     private static final BigDecimal APPROVAL_THRESHOLD = new BigDecimal("1000");
+    
+    public TransactionService(TransactionRepository transactionRepository, WalletRepository walletRepository, AuditLogger auditLogger) {
+        this.transactionRepository = transactionRepository;
+        this.walletRepository = walletRepository;
+        this.auditLogger = auditLogger;
+    }
     
     @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public TransactionResponse deposit(DepositRequest request, Authentication authentication) {
